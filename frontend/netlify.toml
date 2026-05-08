@@ -1,0 +1,19 @@
+# Netlify Deploy Configuration
+
+[build]
+  command = "echo 'Frontend pronto para deploy' && exit 0"
+  publish = "."
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[context.production.environment]
+  REACT_APP_BACKEND_URL = "https://cia-condimentos-api.onrender.com"
+
+[context.deploy-preview.environment]
+  REACT_APP_BACKEND_URL = "https://cia-condimentos-api.onrender.com"
+
+[context.branch-deploy.environment]
+  REACT_APP_BACKEND_URL = "https://cia-condimentos-api.onrender.com"

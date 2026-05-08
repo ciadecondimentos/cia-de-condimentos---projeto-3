@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Cia de Condimentos – Especiarias Premium</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="announcement-bar">✦ FRETE GRÁTIS A PARTIR DE R$ 50 ✦</div>
+
+<header class="header">
+  <div class="header-inner">
+    <a href="#" class="logo-link">
+      <div class="logo-img">🌶️</div>
+      <div class="logo-text">
+        <div class="logo-name">Cia de Condimentos</div>
+        <div class="logo-sub">Especiarias Premium</div>
+      </div>
+    </a>
+    <nav class="nav" id="nav">
+      <a href="#products" class="nav-link">Produtos</a>
+      <a href="#contato" class="nav-link">Contato</a>
+    </nav>
+    <button class="cart-btn" id="cartBtn">
+      🛒 Carrinho
+      <span class="cart-badge" id="cartBadge">0</span>
+    </button>
+    <button class="menu-toggle" id="menuToggle">☰</button>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <h1 class="hero-title">Temperos que Contam Histórias</h1>
+    <p class="hero-subtitle">Descubra o mundo dos aromas e sabores das especiarias premium da Cia de Condimentos.</p>
+    <a href="#products" class="btn-primary">Explorar Produtos</a>
+  </div>
+</section>
+
+<div class="filter-bar">
+  <div class="filter-inner">
+    <span class="filter-label">Filtrar:</span>
+    <div class="filter-buttons">
+      <button class="filter-btn active" data-filter="todos">Todos</button>
+      <button class="filter-btn" data-filter="pimentas">Pimentas</button>
+      <button class="filter-btn" data-filter="especiarias">Especiarias</button>
+      <button class="filter-btn" data-filter="ervas">Ervas</button>
+    </div>
+  </div>
+</div>
+
+<section class="products" id="products">
+  <div class="products-inner">
+    <h2 class="section-title">Nossos Produtos</h2>
+    <div class="search-box">
+      <input type="text" id="searchInput" class="search-input" placeholder="Buscar por nome ou descrição..."/>
+    </div>
+    <div class="products-grid" id="productsGrid"></div>
+    <p class="empty-msg" id="emptyMsg" style="display:none;">Nenhum produto encontrado.</p>
+  </div>
+</section>
+
+<section class="contact" id="contato">
+  <div class="contact-inner">
+    <h2 class="section-title">Entre em Contato</h2>
+    <form class="contact-form" id="contactForm">
+      <input type="text" placeholder="Seu nome" required/>
+      <input type="email" placeholder="Seu e-mail" required/>
+      <textarea placeholder="Sua mensagem" rows="5" required></textarea>
+      <button type="submit" class="btn-primary full">Enviar Mensagem</button>
+    </form>
+  </div>
+</section>
+
+<footer class="footer">
+  <p>&copy; 2025 Cia de Condimentos. Todos os direitos reservados.</p>
+</footer>
+
+<!-- Sidebar Carrinho -->
+<div class="cart-overlay" id="cartOverlay"></div>
+<div class="cart-sidebar" id="cartSidebar">
+  <div class="cart-header">
+    <h3>Seu Carrinho</h3>
+    <button class="cart-close-btn" id="cartClose">✕</button>
+  </div>
+  <div class="cart-items" id="cartItems">
+    <p class="cart-empty">Seu carrinho está vazio.</p>
+  </div>
+  <div class="cart-footer" id="cartFooter">
+    <div class="cart-total">
+      <span>Total:</span>
+      <span id="cartTotal">R$ 0,00</span>
+    </div>
+    <button class="btn-primary full" id="checkoutBtn">Pagar com PIX</button>
+  </div>
+</div>
+
+<!-- Modal PIX -->
+<div class="modal-overlay" id="pixModalOverlay"></div>
+<div class="modal" id="pixModal">
+  <div class="modal-header">
+    <h3>Pagamento PIX</h3>
+    <button class="modal-close" id="pixModalClose">✕</button>
+  </div>
+  <div class="modal-body">
+    <div id="pixLoading" class="pix-loading">
+      <p>Gerando QR Code...</p>
+    </div>
+    <div id="pixContent" class="pix-content" style="display:none;">
+      <p class="pix-info">Escaneie o QR Code com seu banco ou app de pagamento:</p>
+      <div class="qr-code-container">
+        <img id="qrCodeImg" src="" alt="QR Code PIX"/>
+      </div>
+      <p class="pix-info">Ou copie a chave:</p>
+      <div class="pix-key-container">
+        <input type="text" id="pixKey" readonly class="pix-key"/>
+        <button id="copyPixKeyBtn" class="btn-copy">Copiar</button>
+      </div>
+      <p class="pix-status">Status: <span id="pixStatus">Aguardando pagamento...</span></p>
+    </div>
+    <div id="pixError" class="pix-error" style="display:none;">
+      <p>Erro ao gerar PIX. Tente novamente.</p>
+      <button class="btn-primary full" id="retryPixBtn">Tentar Novamente</button>
+    </div>
+  </div>
+</div>
+
+<script src="index.js"></script>
+</body>
+</html>

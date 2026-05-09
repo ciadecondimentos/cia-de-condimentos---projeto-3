@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Admin - Cia de Condimentos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --red:#b01c1c;--red-dark:#8a1515;
+      --yellow:#f5c518;--cream:#f5f0e8;--dark-bg:#2b1a1a;
+      --text-dark:#1e1010;--text-mid:#5c3a3a;--white:#ffffff;
+    }
+    body{font-family:'Nunito',sans-serif;background:var(--cream);color:var(--text-dark)}
+    .admin-container{display:flex;min-height:100vh}
+    .admin-sidebar{background:var(--red);color:#fff;width:260px;padding:20px;overflow-y:auto}
+    .admin-header{font-family:'Playfair Display',serif;font-size:1.3rem;margin-bottom:30px;color:var(--yellow)}
+    .admin-nav{display:flex;flex-direction:column;gap:10px}
+    .admin-nav button{background:none;border:none;color:#fff;padding:12px 16px;text-align:left;cursor:pointer;border-radius:8px;transition:background .2s;font-size:.95rem;font-weight:600}
+    .admin-nav button:hover{background:rgba(255,255,255,.1)}
+    .admin-nav button.active{background:var(--yellow);color:var(--red-dark)}
+    .admin-main{flex:1;padding:30px}
+    .admin-logout{margin-top:auto;background:var(--yellow);color:var(--red-dark);border:none;padding:10px 16px;border-radius:8px;cursor:pointer;font-weight:700;width:100%;transition:background .2s}
+    .admin-logout:hover{background:#d4a800}
+
+    .section{display:none}
+    .section.active{display:block}
+
+    .section-title{font-family:'Playfair Display',serif;font-size:1.8rem;color:var(--red);margin-bottom:24px}
+    .form-group{margin-bottom:16px}
+    .form-group label{display:block;margin-bottom:6px;font-weight:700;font-size:.9rem}
+    .form-group input,.form-group textarea{width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;font-family:'Nunito',sans-serif;font-size:.9rem}
+    .form-group textarea{resize:vertical;min-height:100px}
+    .form-btn{background:var(--red);color:#fff;border:none;padding:12px 24px;border-radius:8px;cursor:pointer;font-weight:700;transition:background .2s}
+    .form-btn:hover{background:var(--red-dark)}
+
+    .products-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px}
+    .product-card{background:#fff;border:1px solid #ddd;border-radius:12px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+    .product-card h4{font-size:1.1rem;margin-bottom:8px}
+    .product-card p{font-size:.85rem;color:var(--text-mid);margin-bottom:12px}
+    .product-price{font-weight:700;color:var(--red);margin-bottom:12px}
+    .product-actions{display:flex;gap:8px}
+    .btn-edit,.btn-delete{flex:1;padding:8px;border:none;border-radius:6px;cursor:pointer;font-weight:600;font-size:.85rem;transition:opacity .2s}
+    .btn-edit{background:var(--yellow);color:var(--red-dark)}
+    .btn-delete{background:#d64545;color:#fff}
+    .btn-edit:hover,.btn-delete:hover{opacity:.8}
+
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;align-items:center;justify-content:center}
+    .modal-overlay.active{display:flex}
+    .modal{background:#fff;border-radius:12px;padding:30px;max-width:500px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+    .modal-header{font-family:'Playfair Display',serif;font-size:1.4rem;margin-bottom:20px;color:var(--red)}
+    .modal-close{position:absolute;top:16px;right:16px;background:none;border:none;font-size:1.5rem;cursor:pointer;color:var(--text-mid)}
+
+    .message{padding:12px;border-radius:8px;margin-bottom:16px;display:none}
+    .message.success{background:#d4edda;color:#155724;border:1px solid #c3e6cb;display:block}
+    .message.error{background:#f8d7da;color:#721c24;border:1px solid #f5c6cb;display:block}
+
+    @media(max-width:768px){
+      .admin-container{flex-direction:column}
+      .admin-sidebar{width:100%;display:flex;gap:10px;padding:12px}
+      .admin-nav{flex-direction:row;flex-wrap:wrap}
+      .admin-nav button{flex:1;padding:8px 12px;font-size:.8rem}
+      .admin-logout{width:auto;padding:8px 12px;font-size:.8rem}
+    }
+  </style>
+</head>
+<body>
+
+<div class="admin-container">
+  <div class="admin-sidebar">
+    <div class="admin-header">🔐 Admin</div>
+    <nav class="admin-nav">
+      <button onclick="showSection('products')" id="btn-products" class="active">Gerenciar Produtos</button>
+      <button onclick="showSection('add-product')" id="btn-add">Adicionar Produto</button>
+      <button class="admin-logout" onclick="logout()">Sair</button>
+    </nav>
+  </div>
+
+  <div class="admin-main">
+    <div id="message" class="message"></div>
+
+    <!-- Seção: Produtos -->
+    <div id="products" class="section active">
+      <h1 class="section-title">Gerenciar Produtos</h1>
+      <div id="productsList" class="products-list"></div>
+    </div>
+
+    <!-- Seção: Adicionar Produto -->
+    <div id="add-product" class="section">
+      <h1 class="section-title">Adicionar Novo Produto</h1>
+      <form id="productForm" onsubmit="submitProduct(event)">
+        <div class="form-group">
+          <label>Nome *</label>
+          <input type="text" id="name" required/>
+        </div>
+        <div class="form-group">
+          <label>Categoria *</label>
+          <input type="text" id="category" placeholder="pimentas, especiarias, ervas" required/>
+        </div>
+        <div class="form-group">
+          <label>Emoji 🌶️ *</label>
+          <input type="text" id="emoji" placeholder="Cole um emoji aqui" required maxlength="5"/>
+        </div>
+        <div class="form-group">
+          <label>Descrição *</label>
+          <textarea id="desc" required></textarea>
+        </div>
+        <div class="form-group">
+          <label>Preço (R$) *</label>
+          <input type="number" id="price" step="0.01" min="0" required/>
+        </div>
+        <button type="submit" class="form-btn">Adicionar Produto</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de Edição -->
+<div id="editModal" class="modal-overlay">
+  <div class="modal">
+    <button class="modal-close" onclick="closeEditModal()">✕</button>
+    <div class="modal-header">Editar Produto</div>
+    <form id="editForm" onsubmit="submitEdit(event)">
+      <input type="hidden" id="editId"/>
+      <div class="form-group">
+        <label>Nome *</label>
+        <input type="text" id="editName" required/>
+      </div>
+      <div class="form-group">
+        <label>Categoria *</label>
+        <input type="text" id="editCategory" required/>
+      </div>
+      <div class="form-group">
+        <label>Emoji *</label>
+        <input type="text" id="editEmoji" maxlength="5" required/>
+      </div>
+      <div class="form-group">
+        <label>Descrição *</label>
+        <textarea id="editDesc" required></textarea>
+      </div>
+      <div class="form-group">
+        <label>Preço (R$) *</label>
+        <input type="number" id="editPrice" step="0.01" min="0" required/>
+      </div>
+      <button type="submit" class="form-btn">Salvar Alterações</button>
+    </form>
+  </div>
+</div>
+
+<script src="admin.js"></script>
+</body>
+</html>

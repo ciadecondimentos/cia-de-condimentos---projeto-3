@@ -2,7 +2,17 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import crypto from 'crypto';
-import { savePayment, updatePaymentStatus, getPaymentByMercadoPagoId, getAllPayments } from './db.js';
+import { 
+  savePayment, 
+  updatePaymentStatus, 
+  getPaymentByMercadoPagoId, 
+  getAllPayments,
+  createProduct,
+  getAllProducts,
+  getProductById,
+  updateProduct,
+  deleteProduct
+} from './db.js';
 
 dotenv.config();
 
@@ -210,6 +220,88 @@ app.get('/payments', async (req, res) => {
   } catch (error) {
     console.error('Erro ao listar pagamentos:', error);
     res.status(500).json({ error: 'Erro ao listar pagamentos' });
+  }
+});
+
+// =======================
+// ROTAS DE PRODUTOS
+// =======================
+
+// GET /products - Listar todos os produtos
+app.get('/products', async (req, res) => {
+  try {
+    const products = await getAllProducts();
+    res.json(products);
+  } catch (error) {
+    console.error('Erro ao listar produtos:', error);
+    res.status(500).json({ error: 'Erro ao listar produtos' });
+  }
+});
+
+// GET /products/:id - Buscar um produto
+app.get('/products/:id', async (req, res) => {
+  try {
+    const product = await getProductById(req.params.id);
+    if (!product) {
+      return res.status(404).json({ error: 'Produto não encontrado' });
+    }
+    res.json(product);
+  } catch (error) {
+    console.error('Erro ao buscar produto:', error);
+    res.status(500).json({ error: 'Erro ao buscar produto' });
+  }
+});
+
+// POST /products - Criar novo produto
+app.post('/products', async (req, res) => {
+  try {
+    const { name, category, emoji, desc, price } = req.body;
+
+    if (!name || !category || !emoji || !desc || price === undefined) {
+      return res.status(400).json({ error: 'Campos obrigatórios faltando' });
+    }
+
+    const product = await createProduct(name, category, emoji, desc, price);
+    res.status(201).json(product);
+  } catch (error) {
+    console.error('Erro ao criar produto:', error);
+    res.status(500).json({ error: 'Erro ao criar produto' });
+  }
+});
+
+// PUT /products/:id - Atualizar produto
+app.put('/products/:id', async (req, res) => {
+  try {
+    const { name, category, emoji, desc, price } = req.body;
+
+    if (!name || !category || !emoji || !desc || price === undefined) {
+      return res.status(400).json({ error: 'Campos obrigatórios faltando' });
+    }
+
+    const product = await updateProduct(req.params.id, name, category, emoji, desc, price);
+    if (!product) {
+      return res.status(404).json({ error: 'Produto não encontrado' });
+    }
+
+    res.json(product);
+  } catch (error) {
+    console.error('Erro ao atualizar produto:', error);
+    res.status(500).json({ error: 'Erro ao atualizar produto' });
+  }
+});
+
+// DELETE /products/:id - Deletar produto
+app.delete('/products/:id', async (req, res) => {
+  try {
+    const product = await deleteProduct(req.params.id);
+    if (!product) {
+      return res.status(404).json({ error: 'Produto não encontrado' });
+    }
+
+    res.json({ message: 'Produto deletado com sucesso' });
+  } catch (error) {
+    console.error('Erro ao deletar produto:', error);
+    res.status(500).json({ error: 'Erro ao deletar produto' });
   }
 });
 

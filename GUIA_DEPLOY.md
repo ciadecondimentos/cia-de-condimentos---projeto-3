@@ -48,12 +48,16 @@ https://cia-condimentos-api.onrender.com
 
 ### ✅ Passo 5: Configurar Webhook no Mercado Pago
 
+**Se você JÁ tem um webhook secret pronto:**
+- Simplesmente use o que você já tem no `MP_WEBHOOK_SECRET` do Render ✅
+
+**Se você NUNCA criou um webhook:**
 1. Acesse sua conta Mercado Pago → **Desenvolvedores** → **Webhooks**
 2. Clique em **"Criar webhook"**
 3. Adicione a URL: `https://cia-condimentos-api.onrender.com/webhook`
 4. Selecione eventos: **payment.created** e **payment.updated**
 5. Copie o **Secret** gerado
-6. Volte ao Render e atualize a variável: `MP_WEBHOOK_SECRET = seu_novo_secret`
+6. Volte ao Render e adicione a variável: `MP_WEBHOOK_SECRET = seu_secret_aqui`
 
 ---
 

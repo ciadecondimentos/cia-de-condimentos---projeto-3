@@ -41,8 +41,23 @@ async function initDatabase() {
       );
     `);
     console.log('📊 Tabela de pagamentos criada/verificada!');
+
+    // Criar tabela de produtos
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS products (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        category VARCHAR(100) NOT NULL,
+        emoji VARCHAR(10),
+        desc TEXT,
+        price DECIMAL(10, 2) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+    console.log('🛒 Tabela de produtos criada/verificada!');
   } catch (err) {
-    console.error('❌ Erro ao criar tabela:', err.message);
+    console.error('❌ Erro ao criar tabelas:', err.message);
   }
 }
 
@@ -106,6 +121,66 @@ export async function getAllPayments() {
     return result.rows;
   } catch (err) {
     console.error('❌ Erro ao buscar pagamentos:', err.message);
+    throw err;
+  }
+}
+
+// ============================================
+// Funções de Produtos
+// ============================================
+
+export async function createProduct(name, category, emoji, desc, price) {
+  try {
+    const result = await client.query(
+      'INSERT INTO products (name, category, emoji, desc, price) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+      [name, category, emoji, desc, price]
+    );
+    return result.rows[0];
+  } catch (err) {
+    console.error('Erro ao criar produto:', err.message);
+    throw err;
+  }
+}
+
+export async function getAllProducts() {
+  try {
+    const result = await client.query('SELECT * FROM products ORDER BY created_at DESC');
+    return result.rows;
+  } catch (err) {
+    console.error('Erro ao buscar produtos:', err.message);
+    throw err;
+  }
+}
+
+export async function getProductById(id) {
+  try {
+    const result = await client.query('SELECT * FROM products WHERE id = $1', [id]);
+    return result.rows[0];
+  } catch (err) {
+    console.error('Erro ao buscar produto:', err.message);
+    throw err;
+  }
+}
+
+export async function updateProduct(id, name, category, emoji, desc, price) {
+  try {
+    const result = await client.query(
+      'UPDATE products SET name = $1, category = $2, emoji = $3, desc = $4, price = $5, updated_at = CURRENT_TIMESTAMP WHERE id = $6 RETURNING *',
+      [name, category, emoji, desc, price, id]
+    );
+    return result.rows[0];
+  } catch (err) {
+    console.error('Erro ao atualizar produto:', err.message);
+    throw err;
+  }
+}
+
+export async function deleteProduct(id) {
+  try {
+    const result = await client.query('DELETE FROM products WHERE id = $1 RETURNING *', [id]);
+    return result.rows[0];
+  } catch (err) {
+    console.error('Erro ao deletar produto:', err.message);
     throw err;
   }
 }

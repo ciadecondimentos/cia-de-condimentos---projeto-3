@@ -27,9 +27,9 @@ const BACKEND_URL = getBackendUrl();
 console.log(`🔗 Backend URL: ${BACKEND_URL}`);
 
 // ============================================
-// Base de Produtos
+// Base de Produtos (Padrão para uso local)
 // ============================================
-const products = [
+const defaultProducts = [
   { id: 1, name: 'Pimenta Dedo-de-Moça', category: 'pimentas', emoji: '🌶️', desc: 'Pimenta fresca e picante, ideal para molhos e marinadas.', price: 12.90 },
   { id: 2, name: 'Pimenta do Reino Preta', category: 'pimentas', emoji: '⚫', desc: 'Grãos inteiros de pimenta negra com aroma intenso.', price: 15.50 },
   { id: 3, name: 'Pimenta Caiena em Pó', category: 'pimentas', emoji: '🔴', desc: 'Pimenta caiena moída, picante e versátil.', price: 9.90 },
@@ -43,6 +43,34 @@ const products = [
   { id: 11, name: 'Tomilho Fresco Seco', category: 'ervas', emoji: '🌾', desc: 'Tomilho aromático para sopas, carnes e legumes.', price: 9.20 },
   { id: 12, name: 'Cravo-da-Índia', category: 'especiarias', emoji: '🌰', desc: 'Cravo inteiro com aroma marcante para doces e molhos.', price: 10.50 }
 ];
+
+let products = [...defaultProducts];
+
+// ============================================
+// Carregar Produtos da API
+// ============================================
+async function loadProductsFromAPI() {
+  try {
+    const response = await fetch(`${BACKEND_URL}/products`);
+    if (response.ok) {
+      const apiProducts = await response.json();
+      if (apiProducts.length > 0) {
+        products = apiProducts;
+        console.log('✅ Produtos carregados da API:', apiProducts.length);
+      }
+    }
+  } catch (error) {
+    console.warn('⚠️ Não foi possível carregar produtos da API, usando padrão:', error.message);
+  }
+  
+  // Renderizar produtos após carregar
+  renderProducts();
+}
+
+// Carregar produtos quando a página carrega
+window.addEventListener('load', () => {
+  loadProductsFromAPI();
+});
 
 // ============================================
 // Estado da App
@@ -394,6 +422,5 @@ document.getElementById('contactForm').addEventListener('submit', e => {
 });
 
 // ============================================
-// Inicializar App
+// Inicializar App (produtos carregados via loadProductsFromAPI)
 // ============================================
-renderProducts();

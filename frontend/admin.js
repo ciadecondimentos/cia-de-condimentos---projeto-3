@@ -2,8 +2,6 @@
 // Configuração do Backend
 // ============================================
 const getBackendUrl = () => {
-  if (window.BACKEND_URL) return window.BACKEND_URL;
-  if (process.env.REACT_APP_BACKEND_URL) return process.env.REACT_APP_BACKEND_URL;
   if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
     return 'http://localhost:3000';
   }
@@ -45,11 +43,17 @@ function logout() {
 // Mostrar/Ocultar Seções
 // ============================================
 function showSection(sectionId) {
-  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.getElementById(sectionId).classList.add('active');
-
-  document.querySelectorAll('.admin-nav button').forEach(b => b.classList.remove('active'));
-  document.getElementById(`btn-${sectionId}`).classList.add('active');
+  const sections = document.querySelectorAll('.section');
+  const buttons = document.querySelectorAll('.admin-nav button');
+  
+  sections.forEach(s => s.classList.remove('active'));
+  buttons.forEach(b => b.classList.remove('active'));
+  
+  const targetSection = document.getElementById(sectionId);
+  const targetButton = document.getElementById(`btn-${sectionId}`);
+  
+  if (targetSection) targetSection.classList.add('active');
+  if (targetButton) targetButton.classList.add('active');
 }
 
 // ============================================
@@ -70,6 +74,10 @@ async function loadProducts() {
 
 function displayProducts(products) {
   const list = document.getElementById('productsList');
+  if (!list) {
+    console.warn('Elemento #productsList não encontrado');
+    return;
+  }
   
   if (products.length === 0) {
     list.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#5c3a3a">Nenhum produto cadastrado</p>';
@@ -101,12 +109,23 @@ function displayProducts(products) {
 function submitProduct(event) {
   event.preventDefault();
 
+  const nameField = document.getElementById('name');
+  const categoryField = document.getElementById('category');
+  const emojiField = document.getElementById('emoji');
+  const descField = document.getElementById('desc');
+  const priceField = document.getElementById('price');
+
+  if (!nameField || !categoryField || !emojiField || !descField || !priceField) {
+    showMessage('❌ Formulário incompleto', 'error');
+    return;
+  }
+
   const product = {
-    name: document.getElementById('name').value,
-    category: document.getElementById('category').value,
-    emoji: document.getElementById('emoji').value,
-    desc: document.getElementById('desc').value,
-    price: parseFloat(document.getElementById('price').value)
+    name: nameField.value,
+    category: categoryField.value,
+    emoji: emojiField.value,
+    desc: descField.value,
+    price: parseFloat(priceField.value)
   };
 
   createProduct(product);
@@ -123,7 +142,8 @@ async function createProduct(product) {
     if (!response.ok) throw new Error('Erro ao criar produto');
 
     showMessage('✅ Produto adicionado com sucesso!', 'success');
-    document.getElementById('productForm').reset();
+    const form = document.getElementById('productForm');
+    if (form) form.reset();
     setTimeout(() => {
       loadProducts();
       showSection('products');
@@ -138,29 +158,50 @@ async function createProduct(product) {
 // Editar Produto
 // ============================================
 function editProduct(id, name, category, emoji, desc, price) {
-  document.getElementById('editId').value = id;
-  document.getElementById('editName').value = name;
-  document.getElementById('editCategory').value = category;
-  document.getElementById('editEmoji').value = emoji;
-  document.getElementById('editDesc').value = desc;
-  document.getElementById('editPrice').value = price;
-  document.getElementById('editModal').classList.add('active');
+  const editId = document.getElementById('editId');
+  const editName = document.getElementById('editName');
+  const editCategory = document.getElementById('editCategory');
+  const editEmoji = document.getElementById('editEmoji');
+  const editDesc = document.getElementById('editDesc');
+  const editPrice = document.getElementById('editPrice');
+  const editModal = document.getElementById('editModal');
+  
+  if (editId) editId.value = id;
+  if (editName) editName.value = name;
+  if (editCategory) editCategory.value = category;
+  if (editEmoji) editEmoji.value = emoji;
+  if (editDesc) editDesc.value = desc;
+  if (editPrice) editPrice.value = price;
+  if (editModal) editModal.classList.add('active');
 }
 
 function closeEditModal() {
-  document.getElementById('editModal').classList.remove('active');
+  const editModal = document.getElementById('editModal');
+  if (editModal) editModal.classList.remove('active');
 }
 
 async function submitEdit(event) {
   event.preventDefault();
 
-  const id = document.getElementById('editId').value;
+  const editId = document.getElementById('editId');
+  const editName = document.getElementById('editName');
+  const editCategory = document.getElementById('editCategory');
+  const editEmoji = document.getElementById('editEmoji');
+  const editDesc = document.getElementById('editDesc');
+  const editPrice = document.getElementById('editPrice');
+
+  if (!editId || !editName || !editCategory || !editEmoji || !editDesc || !editPrice) {
+    showMessage('❌ Formulário incompleto', 'error');
+    return;
+  }
+
+  const id = editId.value;
   const product = {
-    name: document.getElementById('editName').value,
-    category: document.getElementById('editCategory').value,
-    emoji: document.getElementById('editEmoji').value,
-    desc: document.getElementById('editDesc').value,
-    price: parseFloat(document.getElementById('editPrice').value)
+    name: editName.value,
+    category: editCategory.value,
+    emoji: editEmoji.value,
+    desc: editDesc.value,
+    price: parseFloat(editPrice.value)
   };
 
   try {
@@ -207,7 +248,11 @@ async function deleteProduct(id, name) {
 // ============================================
 function showMessage(text, type) {
   const msg = document.getElementById('message');
+  if (!msg) return;
+  
   msg.textContent = text;
   msg.className = `message ${type}`;
-  setTimeout(() => msg.classList.remove('success', 'error'), 3000);
+  setTimeout(() => {
+    msg.classList.remove('success', 'error');
+  }, 3000);
 }

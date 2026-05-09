@@ -89,10 +89,10 @@ function displayProducts(products) {
       <div style="font-size:2rem;margin-bottom:8px">${p.emoji}</div>
       <h4>${p.name}</h4>
       <p>${p.category}</p>
-      <p>${p.desc}</p>
+      <p>${p.description}</p>
       <div class="product-price">R$ ${p.price.toFixed(2).replace('.', ',')}</div>
       <div class="product-actions">
-        <button class="btn-edit" onclick="editProduct(${p.id}, '${p.name}', '${p.category}', '${p.emoji}', '${p.desc.replace(/'/g, "\\'")}', ${p.price})">
+        <button class="btn-edit" onclick="editProduct(${p.id}, '${p.name}', '${p.category}', '${p.emoji}', '${p.description.replace(/'/g, "\\'")}'  , ${p.price})">
           ✏️ Editar
         </button>
         <button class="btn-delete" onclick="deleteProduct(${p.id}, '${p.name}')">
@@ -112,10 +112,10 @@ function submitProduct(event) {
   const nameField = document.getElementById('name');
   const categoryField = document.getElementById('category');
   const emojiField = document.getElementById('emoji');
-  const descField = document.getElementById('desc');
+  const descriptionField = document.getElementById('description');
   const priceField = document.getElementById('price');
 
-  if (!nameField || !categoryField || !emojiField || !descField || !priceField) {
+  if (!nameField || !categoryField || !emojiField || !descriptionField || !priceField) {
     showMessage('❌ Formulário incompleto', 'error');
     return;
   }
@@ -124,7 +124,7 @@ function submitProduct(event) {
     name: nameField.value,
     category: categoryField.value,
     emoji: emojiField.value,
-    desc: descField.value,
+    description: descriptionField.value,
     price: parseFloat(priceField.value)
   };
 
@@ -157,12 +157,12 @@ async function createProduct(product) {
 // ============================================
 // Editar Produto
 // ============================================
-function editProduct(id, name, category, emoji, desc, price) {
+function editProduct(id, name, category, emoji, description, price) {
   const editId = document.getElementById('editId');
   const editName = document.getElementById('editName');
   const editCategory = document.getElementById('editCategory');
   const editEmoji = document.getElementById('editEmoji');
-  const editDesc = document.getElementById('editDesc');
+  const editDescription = document.getElementById('editDescription');
   const editPrice = document.getElementById('editPrice');
   const editModal = document.getElementById('editModal');
   
@@ -170,7 +170,7 @@ function editProduct(id, name, category, emoji, desc, price) {
   if (editName) editName.value = name;
   if (editCategory) editCategory.value = category;
   if (editEmoji) editEmoji.value = emoji;
-  if (editDesc) editDesc.value = desc;
+  if (editDescription) editDescription.value = description;
   if (editPrice) editPrice.value = price;
   if (editModal) editModal.classList.add('active');
 }
@@ -187,10 +187,10 @@ async function submitEdit(event) {
   const editName = document.getElementById('editName');
   const editCategory = document.getElementById('editCategory');
   const editEmoji = document.getElementById('editEmoji');
-  const editDesc = document.getElementById('editDesc');
+  const editDescription = document.getElementById('editDescription');
   const editPrice = document.getElementById('editPrice');
 
-  if (!editId || !editName || !editCategory || !editEmoji || !editDesc || !editPrice) {
+  if (!editId || !editName || !editCategory || !editEmoji || !editDescription || !editPrice) {
     showMessage('❌ Formulário incompleto', 'error');
     return;
   }
@@ -200,7 +200,7 @@ async function submitEdit(event) {
     name: editName.value,
     category: editCategory.value,
     emoji: editEmoji.value,
-    desc: editDesc.value,
+    description: editDescription.value,
     price: parseFloat(editPrice.value)
   };
 

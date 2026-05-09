@@ -49,7 +49,7 @@ async function initDatabase() {
         name VARCHAR(255) NOT NULL,
         category VARCHAR(100) NOT NULL,
         emoji VARCHAR(10),
-        desc TEXT,
+        description TEXT,
         price DECIMAL(10, 2) NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -129,11 +129,11 @@ export async function getAllPayments() {
 // Funções de Produtos
 // ============================================
 
-export async function createProduct(name, category, emoji, desc, price) {
+export async function createProduct(name, category, emoji, description, price) {
   try {
     const result = await client.query(
-      'INSERT INTO products (name, category, emoji, desc, price) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-      [name, category, emoji, desc, price]
+      'INSERT INTO products (name, category, emoji, description, price) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+      [name, category, emoji, description, price]
     );
     return result.rows[0];
   } catch (err) {
@@ -162,11 +162,11 @@ export async function getProductById(id) {
   }
 }
 
-export async function updateProduct(id, name, category, emoji, desc, price) {
+export async function updateProduct(id, name, category, emoji, description, price) {
   try {
     const result = await client.query(
-      'UPDATE products SET name = $1, category = $2, emoji = $3, desc = $4, price = $5, updated_at = CURRENT_TIMESTAMP WHERE id = $6 RETURNING *',
-      [name, category, emoji, desc, price, id]
+      'UPDATE products SET name = $1, category = $2, emoji = $3, description = $4, price = $5, updated_at = CURRENT_TIMESTAMP WHERE id = $6 RETURNING *',
+      [name, category, emoji, description, price, id]
     );
     return result.rows[0];
   } catch (err) {

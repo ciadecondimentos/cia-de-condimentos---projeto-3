@@ -30,18 +30,18 @@ console.log(`🔗 Backend URL: ${BACKEND_URL}`);
 // Base de Produtos (Padrão para uso local)
 // ============================================
 const defaultProducts = [
-  { id: 1, name: 'Pimenta Dedo-de-Moça', category: 'pimentas', emoji: '🌶️', desc: 'Pimenta fresca e picante, ideal para molhos e marinadas.', price: 12.90 },
-  { id: 2, name: 'Pimenta do Reino Preta', category: 'pimentas', emoji: '⚫', desc: 'Grãos inteiros de pimenta negra com aroma intenso.', price: 15.50 },
-  { id: 3, name: 'Pimenta Caiena em Pó', category: 'pimentas', emoji: '🔴', desc: 'Pimenta caiena moída, picante e versátil.', price: 9.90 },
-  { id: 4, name: 'Cúrcuma (Açafrão-da-Terra)', category: 'especiarias', emoji: '🟡', desc: 'Especiaria antiinflamatória com cor vibrante e sabor suave.', price: 11.00 },
-  { id: 5, name: 'Canela em Pau', category: 'especiarias', emoji: '🟤', desc: 'Canela em rama de alta qualidade para sobremesas e chás.', price: 13.90 },
-  { id: 6, name: 'Cominho em Pó', category: 'especiarias', emoji: '🫙', desc: 'Cominho moído, essencial para temperos nordestinos.', price: 8.50 },
-  { id: 7, name: 'Páprica Defumada', category: 'especiarias', emoji: '🧡', desc: 'Páprica com toque defumado, perfeita para carnes.', price: 14.80 },
-  { id: 8, name: 'Manjericão Seco', category: 'ervas', emoji: '🌿', desc: 'Manjericão desidratado com aroma fresco e intenso.', price: 7.90 },
-  { id: 9, name: 'Alecrim Desidratado', category: 'ervas', emoji: '🌱', desc: 'Alecrim seco ideal para assados e pães artesanais.', price: 8.90 },
-  { id: 10, name: 'Orégano Premium', category: 'ervas', emoji: '🍃', desc: 'Orégano selecionado, indispensável na cozinha italiana.', price: 6.90 },
-  { id: 11, name: 'Tomilho Fresco Seco', category: 'ervas', emoji: '🌾', desc: 'Tomilho aromático para sopas, carnes e legumes.', price: 9.20 },
-  { id: 12, name: 'Cravo-da-Índia', category: 'especiarias', emoji: '🌰', desc: 'Cravo inteiro com aroma marcante para doces e molhos.', price: 10.50 }
+  { id: 1, name: 'Pimenta Dedo-de-Moça', category: 'pimentas', emoji: '🌶️', description: 'Pimenta fresca e picante, ideal para molhos e marinadas.', price: 12.90 },
+  { id: 2, name: 'Pimenta do Reino Preta', category: 'pimentas', emoji: '⚫', description: 'Grãos inteiros de pimenta negra com aroma intenso.', price: 15.50 },
+  { id: 3, name: 'Pimenta Caiena em Pó', category: 'pimentas', emoji: '🔴', description: 'Pimenta caiena moída, picante e versátil.', price: 9.90 },
+  { id: 4, name: 'Cúrcuma (Açafrão-da-Terra)', category: 'especiarias', emoji: '🟡', description: 'Especiaria antiinflamatória com cor vibrante e sabor suave.', price: 11.00 },
+  { id: 5, name: 'Canela em Pau', category: 'especiarias', emoji: '🟤', description: 'Canela em rama de alta qualidade para sobremesas e chás.', price: 13.90 },
+  { id: 6, name: 'Cominho em Pó', category: 'especiarias', emoji: '🫙', description: 'Cominho moído, essencial para temperos nordestinos.', price: 8.50 },
+  { id: 7, name: 'Páprica Defumada', category: 'especiarias', emoji: '🧡', description: 'Páprica com toque defumado, perfeita para carnes.', price: 14.80 },
+  { id: 8, name: 'Manjericão Seco', category: 'ervas', emoji: '🌿', description: 'Manjericão desidratado com aroma fresco e intenso.', price: 7.90 },
+  { id: 9, name: 'Alecrim Desidratado', category: 'ervas', emoji: '🌱', description: 'Alecrim seco ideal para assados e pães artesanais.', price: 8.90 },
+  { id: 10, name: 'Orégano Premium', category: 'ervas', emoji: '🍃', description: 'Orégano selecionado, indispensável na cozinha italiana.', price: 6.90 },
+  { id: 11, name: 'Tomilho Fresco Seco', category: 'ervas', emoji: '🌾', description: 'Tomilho aromático para sopas, carnes e legumes.', price: 9.20 },
+  { id: 12, name: 'Cravo-da-Índia', category: 'especiarias', emoji: '🌰', description: 'Cravo inteiro com aroma marcante para doces e molhos.', price: 10.50 }
 ];
 
 let products = [...defaultProducts];
@@ -103,7 +103,7 @@ function renderProducts() {
   const q = searchQuery.toLowerCase().trim();
   const filtered = products.filter(p => {
     const matchCategory = activeFilter === 'todos' || p.category === activeFilter;
-    const matchSearch = !q || p.name.toLowerCase().includes(q) || p.desc.toLowerCase().includes(q);
+    const matchSearch = !q || p.name.toLowerCase().includes(q) || p.description.toLowerCase().includes(q);
     return matchCategory && matchSearch;
   });
 
@@ -125,7 +125,7 @@ function renderProducts() {
       <div class="card-body">
         <span class="card-category">${p.category}</span>
         <div class="card-name">${p.name}</div>
-        <p class="card-desc">${p.desc}</p>
+        <p class="card-desc">${p.description}</p>
         <div class="card-footer">
           <span class="card-price">R$ ${p.price.toFixed(2).replace('.', ',')}</span>
           <button class="add-btn" data-id="${p.id}">+ Adicionar</button>

@@ -230,11 +230,13 @@ app.get('/payments', async (req, res) => {
 // GET /products - Listar todos os produtos
 app.get('/products', async (req, res) => {
   try {
+    console.log('📦 Buscando todos os produtos...');
     const products = await getAllProducts();
+    console.log(`✅ ${products.length} produtos encontrados`);
     res.json(products);
   } catch (error) {
-    console.error('Erro ao listar produtos:', error);
-    res.status(500).json({ error: 'Erro ao listar produtos' });
+    console.error('❌ Erro ao listar produtos:', error.message, error.stack);
+    res.status(500).json({ error: 'Erro ao listar produtos', details: error.message });
   }
 });
 
@@ -255,30 +257,34 @@ app.get('/products/:id', async (req, res) => {
 // POST /products - Criar novo produto
 app.post('/products', async (req, res) => {
   try {
-    const { name, category, emoji, desc, price } = req.body;
+    const { name, category, emoji, description, price } = req.body;
+    
+    console.log('➕ Criando novo produto:', { name, category, price });
 
-    if (!name || !category || !emoji || !desc || price === undefined) {
+    if (!name || !category || !emoji || !description || price === undefined) {
+      console.warn('⚠️ Campos obrigatórios faltando:', { name, category, emoji, description, price });
       return res.status(400).json({ error: 'Campos obrigatórios faltando' });
     }
 
-    const product = await createProduct(name, category, emoji, desc, price);
+    const product = await createProduct(name, category, emoji, description, price);
+    console.log('✅ Produto criado com ID:', product.id);
     res.status(201).json(product);
   } catch (error) {
-    console.error('Erro ao criar produto:', error);
-    res.status(500).json({ error: 'Erro ao criar produto' });
+    console.error('❌ Erro ao criar produto:', error.message, error.stack);
+    res.status(500).json({ error: 'Erro ao criar produto', details: error.message });
   }
 });
 
 // PUT /products/:id - Atualizar produto
 app.put('/products/:id', async (req, res) => {
   try {
-    const { name, category, emoji, desc, price } = req.body;
+    const { name, category, emoji, description, price } = req.body;
 
-    if (!name || !category || !emoji || !desc || price === undefined) {
+    if (!name || !category || !emoji || !description || price === undefined) {
       return res.status(400).json({ error: 'Campos obrigatórios faltando' });
     }
 
-    const product = await updateProduct(req.params.id, name, category, emoji, desc, price);
+    const product = await updateProduct(req.params.id, name, category, emoji, description, price);
     if (!product) {
       return res.status(404).json({ error: 'Produto não encontrado' });
     }
@@ -303,6 +309,38 @@ app.delete('/products/:id', async (req, res) => {
     console.error('Erro ao deletar produto:', error);
     res.status(500).json({ error: 'Erro ao deletar produto' });
   }
+});
+
+// =======================
+// Teste de Conexão
+// =======================
+app.get('/health', (req, res) => {
+  res.json({ status: '✅ Servidor OK', timestamp: new Date().toISOString() });
+});
+
+// =======================
+// Tratamento Global de Erros
+// =======================
+app.use((err, req, res, next) => {
+  console.error('❌ ERRO NÃO CAPTURADO:', {
+    message: err.message,
+    stack: err.stack,
+    path: req.path,
+    method: req.method,
+    timestamp: new Date().toISOString()
+  });
+  
+  res.status(500).json({
+    error: 'Erro interno do servidor',
+    message: err.message,
+    path: req.path
+  });
+});
+
+// 404 - Rota não encontrada
+app.use((req, res) => {
+  console.warn(`⚠️ Rota não encontrada: ${req.method} ${req.path}`);
+  res.status(404).json({ error: 'Rota não encontrada' });
 });
 
 // =======================
